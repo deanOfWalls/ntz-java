@@ -8,12 +8,13 @@ public final class Notez {
     private FileMap filemap;
 
     public Notez() {
-        this.filemap  = new FileMap();
+        this.filemap = new FileMap();
     }
+
     /**
      * Says hello to the world.
      *
-     * @param args The arguments of the program.
+     * @param argv The arguments of the program.
      */
     public static void main(String argv[]) {
         boolean _debug = true;
@@ -21,7 +22,7 @@ public final class Notez {
         if (_debug) {
             System.err.print("Argv: [");
             for (String a : argv) {
-                System.err.print(a+" ");
+                System.err.print(a + " ");
             }
             System.err.println("]");
         }
@@ -44,26 +45,43 @@ public final class Notez {
         if (argv.length == 0) { // there are no commandline arguments
             //just print the contents of the filemap.
             ntzEngine.printResults();
-        } else {
-            if (argv[0].equals("-r")) {
-                ntzEngine.addToCategory("General", argv);
-            }
-
-            // this should give you an idea about how to TEST the Notez engine
-              // without having to spend lots of time messing with command line arguments.
+        } else if (argv[0].equals("-r")) {
+            ntzEngine.addToCategory("General", argv);
+        } else if (argv[0].equals("-c")) {
+            ntzEngine.addToCategory(argv[1], argv);
         }
-        ntzEngine.saveDatabase();
-        /*
-         * what other method calls do you need here to implement the other commands??
-         */
+        else if(argv[0].equals("-f")){
+            ntzEngine.forgetNote(argv[1], Integer.parseInt(argv[2]) -1);
+        }
 
+        // this should give you an idea about how to TEST the Notez engine
+        // without having to spend lots of time messing with command line arguments.
+        ntzEngine.saveDatabase();
     }
+
+    /*
+     * what other method calls do you need here to implement the other commands??
+     */
+
+
 
     private void addToCategory(String category, String[] argv) {
-        filemap.get(category).add(argv[1]);
-
+    if(filemap.containsKey(category)) {
+        filemap.get(category).add(argv[argv.length - 1]);
+    }else{
+        filemap.put(category, new NoteList(argv[argv.length-1]));
     }
 
+    }
+    private void forgetNote(String category, int index) {
+        if(filemap.containsKey(category)){
+            filemap.get(category).remove(index);
+            if(filemap.get(category).size()==0){
+                filemap.remove(category);
+            }
+        }
+
+    }
     private void saveDatabase() {
         filemap.save();
     }
@@ -71,6 +89,7 @@ public final class Notez {
     private void loadDatabase() {
         filemap.load();
     }
+
 
     public void printResults() {
         System.out.println(this.filemap.toString());
