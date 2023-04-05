@@ -49,9 +49,10 @@ public final class Notez {
             ntzEngine.addToCategory("General", argv);
         } else if (argv[0].equals("-c")) {
             ntzEngine.addToCategory(argv[1], argv);
-        }
-        else if(argv[0].equals("-f")){
-            ntzEngine.forgetNote(argv[1], Integer.parseInt(argv[2]) -1);
+        } else if (argv[0].equals("-f")) {
+            ntzEngine.forgetNote(argv[1], Integer.parseInt(argv[2]) - 1);
+        } else if (argv[0].equals("-e")) {
+            ntzEngine.editNote(argv[1], Integer.parseInt(argv[2]) - 1, argv[3]);
         }
 
         // this should give you an idea about how to TEST the Notez engine
@@ -64,24 +65,33 @@ public final class Notez {
      */
 
 
-
     private void addToCategory(String category, String[] argv) {
-    if(filemap.containsKey(category)) {
-        filemap.get(category).add(argv[argv.length - 1]);
-    }else{
-        filemap.put(category, new NoteList(argv[argv.length-1]));
-    }
+        if (filemap.containsKey(category)) {
+            filemap.get(category).add(argv[argv.length - 1]);
+        } else {
+            filemap.put(category, new NoteList(argv[argv.length - 1]));
+        }
 
     }
+
     private void forgetNote(String category, int index) {
-        if(filemap.containsKey(category)){
+        if (filemap.containsKey(category)) {
             filemap.get(category).remove(index);
-            if(filemap.get(category).size()==0){
+            if (filemap.get(category).size() == 0) {
                 filemap.remove(category);
             }
         }
 
     }
+
+    private void editNote(String category, int index, String newMsg) {
+        if (filemap.containsKey(category)) {
+            filemap.get(category).set(index, newMsg);
+
+        }
+    }
+
+
     private void saveDatabase() {
         filemap.save();
     }
